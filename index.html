@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Empresa</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-soft: #1f2937;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --primary: #8b5cf6;
+        --primary-strong: #7c3aed;
+        --accent: #22c55e;
+        --light: #f8fafc;
+        --shadow: rgba(15, 23, 42, 0.28);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(180deg, #020817 0%, #0f172a 100%);
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        width: min(1120px, calc(100% - 2rem));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(10px);
+        background: rgba(15, 23, 42, 0.8);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        z-index: 10;
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 72px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .brand-mark {
+        width: 2.2rem;
+        height: 2.2rem;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary), #38bdf8);
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.5);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        color: var(--muted);
+      }
+
+      .nav a:hover {
+        color: var(--light);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.9rem 1.5rem;
+        border: none;
+        border-radius: 999px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+        color: white;
+        box-shadow: 0 12px 24px rgba(124, 58, 237, 0.35);
+      }
+
+      .btn-secondary {
+        background: rgba(148, 163, 184, 0.1);
+        color: var(--text);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        padding: 0.5rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(139, 92, 246, 0.14);
+        color: #d8b4fe;
+        border: 1px solid rgba(216, 180, 254, 0.25);
+        margin-bottom: 1.2rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        line-height: 1.05;
+        margin: 0 0 1rem;
+      }
+
+      .lead {
+        color: var(--muted);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        max-width: 640px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin-top: 2.5rem;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 1.6rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat span {
+        color: var(--muted);
+      }
+
+      .hero-card {
+        position: relative;
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.75));
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 28px;
+        padding: 1.25rem;
+        box-shadow: 0 30px 50px var(--shadow);
+      }
+
+      .dashboard {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), #111827);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 22px;
+        padding: 1.25rem;
+      }
+
+      .top-panel {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .mini-dots {
+        display: flex;
+        gap: 0.4rem;
+      }
+
+      .mini-dots span {
+        width: 0.7rem;
+        height: 0.7rem;
+        display: inline-block;
+        border-radius: 50%;
+        background: rgba(148, 163, 184, 0.6);
+      }
+
+      .mini-dots span:nth-child(1) { background: #f87171; }
+      .mini-dots span:nth-child(2) { background: #fbbf24; }
+      .mini-dots span:nth-child(3) { background: #34d399; }
+
+      .chart {
+        height: 220px;
+        display: flex;
+        align-items: end;
+        gap: 0.8rem;
+        padding: 1rem 0.5rem 0.5rem;
+      }
+
+      .bar {
+        flex: 1;
+        border-radius: 12px 12px 0 0;
+        background: linear-gradient(180deg, #8b5cf6 0%, #38bdf8 100%);
+        box-shadow: 0 10px 18px rgba(139, 92, 246, 0.25);
+      }
+
+      .bar:nth-child(1) { height: 25%; }
+      .bar:nth-child(2) { height: 45%; }
+      .bar:nth-child(3) { height: 60%; }
+      .bar:nth-child(4) { height: 35%; }
+      .bar:nth-child(5) { height: 80%; }
+      .bar:nth-child(6) { height: 75%; }
+      .bar:nth-child(7) { height: 95%; }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .metric-box {
+        padding: 1rem;
+        border-radius: 16px;
+        background: rgba(148, 163, 184, 0.06);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+      }
+
+      .metric-box small {
+        color: var(--muted);
+      }
+
+      .metric-box strong {
+        font-size: 1.5rem;
+        display: block;
+        margin-top: 0.4rem;
+      }
+
+      section {
+        padding: 2rem 0 5rem;
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .section-title h2 {
+        font-size: clamp(2rem, 3vw, 3rem);
+        margin: 0 0 0.75rem;
+      }
+
+      .section-title p {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.5rem;
+      }
+
+      .feature {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        border-radius: 20px;
+        padding: 1.75rem;
+      }
+
+      .icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(56, 189, 248, 0.2));
+      }
+
+      .feature h3 {
+        margin: 0 0 0.75rem;
+        font-size: 1.2rem;
+      }
+
+      .feature p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .cta {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(34, 197, 94, 0.12));
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        border-radius: 28px;
+        padding: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .cta h3 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+      }
+
+      .cta p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      footer {
+        padding: 2rem 0 3rem;
+        color: var(--muted);
+      }
+
+      .footer-inner {
+        border-top: 1px solid rgba(148, 163, 184, 0.2);
+        padding-top: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 860px) {
+        .hero-grid,
+        .features,
+        .cta {
+          grid-template-columns: 1fr;
+          display: grid;
+        }
+
+        .nav {
+          display: none;
+        }
+
+        .topbar-inner {
+          justify-content: center;
+        }
+
+        .cta {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a href="#" class="brand" aria-label="Página inicial">
+          <span class="brand-mark">N</span>
+          <span>NovaEmpresa</span>
+        </a>
+
+        <nav class="nav" aria-label="Menu principal">
+          <a href="#sobre">Sobre</a>
+          <a href="#servicos">Serviços</a>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#contato">Contato</a>
+        </nav>
+
+        <a href="#contato" class="btn btn-primary">Fale conosco</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <div class="eyebrow">Transformação digital</div>
+            <h1>Construímos soluções que movem negócios.</h1>
+            <p class="lead">
+              A NovaEmpresa ajuda marcas a crescer com tecnologia, estratégia e design
+              pensado para entregar resultados reais e experiências memoráveis.
+            </p>
+
+            <div class="actions">
+              <a href="#servicos" class="btn btn-primary">Conheça nossos serviços</a>
+              <a href="#portfolio" class="btn btn-secondary">Ver projetos</a>
+            </div>
+
+            <div class="stats">
+              <div class="stat">
+                <strong>+120</strong>
+                <span>Projetos entregues</span>
+              </div>
+              <div class="stat">
+                <strong>95%</strong>
+                <span>Satisfação dos clientes</span>
+              </div>
+              <div class="stat">
+                <strong>24/7</strong>
+                <span>Suporte em operação</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-card" aria-label="Dashboard ilustrativo">
+            <div class="dashboard">
+              <div class="top-panel">
+                <span style="font-weight: 700;">Performance</span>
+                <div class="mini-dots" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+
+              <div class="chart" aria-hidden="true">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+              </div>
+
+              <div class="metrics">
+                <div class="metric-box">
+                  <small>Receita</small>
+                  <strong>R$ 48k</strong>
+                </div>
+                <div class="metric-box">
+                  <small>Leads</small>
+                  <strong>1.2k</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicos">
+        <div class="container">
+          <div class="section-title">
+            <h2>O que fazemos</h2>
+            <p>Estratégias e soluções pensadas para acelerar a presença digital da sua empresa.</p>
+          </div>
+
+          <div class="features">
+            <article class="feature">
+              <div class="icon">⚡</div>
+              <h3>Desenvolvimento</h3>
+              <p>Criação de plataformas, aplicativos e sistemas com foco em desempenho, escalabilidade e usabilidade.</p>
+            </article>
+
+            <article class="feature">
+              <div class="icon">🎯</div>
+              <h3>Estratégia</h3>
+              <p>Planejamento de posicionamento, comunicação e experiências digitais para atrair e converter clientes.</p>
+            </article>
+
+            <article class="feature">
+              <div class="icon">📈</div>
+              <h3>Resultados</h3>
+              <p>Monitoramento contínuo de indicadores para garantir crescimento sustentável e decisões mais certeiras.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="portfolio">
+        <div class="container">
+          <div class="cta">
+            <div>
+              <h3>Seu próximo passo começa aqui.</h3>
+              <p>Desenvolvemos soluções sob medida para marcas que querem crescer com clareza e impacto.</p>
+            </div>
+            <a href="#contato" class="btn btn-primary">Solicitar proposta</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contato">
+      <div class="container footer-inner">
+        <span>© 2026 NovaEmpresa</span>
+        <span>contato@novaempresa.com.br</span>
+      </div>
+    </footer>
+  </body>
+</html>
