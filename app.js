@@ -1,10 +1,17 @@
 // app.js
 const express = require('express');
+const path = require('path');
 const app = express();
 
-const tarefasRouter = require('./routes/tarefas');
-// const usuariosRouter = require('./routes/usuarios');  // <- arrumar
+app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+const tarefasRouter = require('./routes/tarefas');
+const usuariosRouter = require('./routes/usuarios');  // <- arrumar
+const imagensRouter = require('./routes/imagens');
 // é o log do servidor
 function logarRequisicao(req, res, next) {
   const inicio = Date.now();
@@ -52,12 +59,13 @@ function verificarApiKey(req, res, next) {
 app.use('/tarefas', verificarApiKey);
 
 // valida token
-// app.use(verificarToken);
+// pp.use(verificarToken);
 app.use(logarRequisicao);
 app.use(express.json());
 app.use('/tarefas', tarefasRouter);
-// app.use('/usuarios', usuariosRouter); // <- arrumar
-
+app.use('/usuarios', usuariosRouter); // <- arrumar
+app.use('/tarefas', tarefasRouter);
+app.use('/index', imagensRouter);
 // tenho que fazer um router para usuarios rs
 
 app.listen(3000, () => {
