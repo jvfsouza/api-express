@@ -7,7 +7,7 @@ router.use(express.static(path.join(__dirname, 'public')));
 
 // Rota principal para enviar a página HTML
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'vibecoded.html'));
 });
 
 module.exports = router;

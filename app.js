@@ -3,16 +3,14 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 const tarefasRouter = require('./routes/tarefas');
 const usuariosRouter = require('./routes/usuarios');  // <- arrumar
-const indexRouter = require('./routes/index');
-// const homepageRouter = require('./routes/homepage');
+const vibecodedRouter = require('./routes/vibecoded');
+const homepageRouter = require('./routes/homepage');
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+
 // é o log do servidor
 function logarRequisicao(req, res, next) {
   const inicio = Date.now();
@@ -25,7 +23,6 @@ function logarRequisicao(req, res, next) {
 
   next();
 }
-
 // verificação de token - tentar melhorar
 function verificarToken(req, res, next) {
   const token = req.headers.authorization;
@@ -39,7 +36,6 @@ function verificarToken(req, res, next) {
 
 // chaves de api validas
 const CHAVES_VALIDAS = ['abc123', 'def456'];
-
 function verificarApiKey(req, res, next) {
   const chave = req.headers['x-api-key'];
 
@@ -55,16 +51,24 @@ function verificarApiKey(req, res, next) {
 }
 
 
+// homepage
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
+});
 // valida chave da api
-app.use('/tarefas', verificarApiKey);
+// app.use('/tarefas', verificarApiKey);
 // valida token
 // app.use(verificarToken);
 app.use(logarRequisicao);
 app.use(express.json());
-// app.get('/', homepageRouter);
 app.use('/tarefas', tarefasRouter);
 app.use('/usuarios', usuariosRouter); // <- arrumar
-app.use('/index', indexRouter);
+app.get('/vibecoded', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'vibecoded.html'));
+});
+app.get('/arquivos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'arquivos', 'fanta.jpeg'));
+});
 
 app.listen(3000, () => {
   console.log('Servidor rodando na porta 3000');
