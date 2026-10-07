@@ -11,7 +11,8 @@ app.get('/', (req, res) => {
 
 const tarefasRouter = require('./routes/tarefas');
 const usuariosRouter = require('./routes/usuarios');  // <- arrumar
-const imagensRouter = require('./routes/imagens');
+const indexRouter = require('./routes/index');
+// const homepageRouter = require('./routes/homepage');
 // é o log do servidor
 function logarRequisicao(req, res, next) {
   const inicio = Date.now();
@@ -36,7 +37,6 @@ function verificarToken(req, res, next) {
   next();
 }
 
-
 // chaves de api validas
 const CHAVES_VALIDAS = ['abc123', 'def456'];
 
@@ -57,16 +57,14 @@ function verificarApiKey(req, res, next) {
 
 // valida chave da api
 app.use('/tarefas', verificarApiKey);
-
 // valida token
-// pp.use(verificarToken);
+// app.use(verificarToken);
 app.use(logarRequisicao);
 app.use(express.json());
+// app.get('/', homepageRouter);
 app.use('/tarefas', tarefasRouter);
 app.use('/usuarios', usuariosRouter); // <- arrumar
-app.use('/tarefas', tarefasRouter);
-app.use('/index', imagensRouter);
-// tenho que fazer um router para usuarios rs
+app.use('/index', indexRouter);
 
 app.listen(3000, () => {
   console.log('Servidor rodando na porta 3000');
