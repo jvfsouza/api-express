@@ -17,7 +17,20 @@ const criarTarefaSchema = z.object({
     .max(100, 'O titulo pode ter no maximo 100 caracteres'),
   prioridade: z.int().min(1).max(3).optional(),
 });
-// da pra colocar .strict() se quiser que faça com que qualquer requisição fora do esperado ja seja rejeitada direto tlgd
+// da pra colocar .strict() se quiser que faça com que qualquer requisição fora do esperado ja seja rejeitada direto
+
+
+// nome meio auto-explicativo mas tem q ser usada depois de tudo
+function tratadorDeErros(err, req, res, next) {
+  console.error(err);
+
+  const status = err.status || 500;
+  const message = err.status ? err.message : 'Erro interno do servidor';
+
+  res.status(status).json({ error: { message } });
+}
+
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -79,6 +92,10 @@ app.get('/vibecoded', (req, res) => {
 app.get('/arquivos', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'arquivos', 'fanta.jpeg'));
 });
+app.use(tratadorDeErros)
+
+
+
 
 app.listen(3000, () => {
   console.log('Servidor rodando na porta 3000');

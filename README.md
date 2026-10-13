@@ -11,3 +11,6 @@ npm start
 ```
 
 O servidor inicia na porta 3000 e a homepage fica disponível em `http://localhost:3000`.
+
+
+obs - criar um folder de schemas padronizando também
