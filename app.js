@@ -1,13 +1,23 @@
 // app.js
 const express = require('express');
 const path = require('path');
+const z = require('zod');
 const app = express();
+
 
 const tarefasRouter = require('./routes/tarefas');
 const usuariosRouter = require('./routes/usuarios');  // <- arrumar
 const vibecodedRouter = require('./routes/vibecoded');
 const homepageRouter = require('./routes/homepage');
 
+// schema e sanitiza junto
+const criarTarefaSchema = z.object({
+  titulo: z.string().trim()
+    .min(3, 'O titulo precisa de ao menos 3 caracteres')
+    .max(100, 'O titulo pode ter no maximo 100 caracteres'),
+  prioridade: z.int().min(1).max(3).optional(),
+});
+// da pra colocar .strict() se quiser que faça com que qualquer requisição fora do esperado ja seja rejeitada direto tlgd
 
 app.use(express.static(path.join(__dirname, 'public')));
 

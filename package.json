@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "express": "^5.2.1",
-    "xpress": "^2.4.6"
+    "xpress": "^2.4.6",
+    "zod": "^4.6.7"
   }
 }
