@@ -92,6 +92,21 @@ app.get('/vibecoded', (req, res) => {
 app.get('/arquivos', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'arquivos', 'fanta.jpeg'));
 });
+
+
+
+// começo da separação em rotas(só meio q direciona, direciona pro controller, e consome as rotas e metodos http)
+// controller (direciona pro serviço, meio q faz o syscal (service) e devolve a resposta)
+//  e service (onde tem a regra de negócio em si)
+
+// é o cliente, product manager e os dev tlgd
+
+// obs - acho q se colocar require dentro do app.use ele só carrega a rota quando precisa, deve melhorar a performance sla
+app.use("/tarefas", require("./routes/tarefas.routes"));
+
+
+
+
 app.use(tratadorDeErros)
 
 
