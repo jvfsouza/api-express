@@ -1,4 +1,8 @@
 // app.js
+// no topo do arquivo principal (ex.: server.js), antes de tudo
+require("dotenv").config();
+
+
 const express = require('express');
 const path = require('path');
 const z = require('zod');
@@ -169,6 +173,4 @@ app.use(tratadorDeErros)
 
 
 
-app.listen(3000, () => {
-  console.log('Servidor rodando na porta 3000');
-});
+export default app;
