@@ -15,12 +15,21 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
+    "dev": "NODE_ENV=development nodemon app.js",
+    "start": "NODE_ENV=production node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "^5.2.1",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0",
+    "morgan": "^1.12.1",
+    "rate-limit": "^0.1.1",
     "xpress": "^2.4.6",
     "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }

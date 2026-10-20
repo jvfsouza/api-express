@@ -4,11 +4,68 @@ const path = require('path');
 const z = require('zod');
 const app = express();
 
+const emProducao = process.env.NODE_ENV === 'production';
+
+import helmet from 'helmet';
+import morgan from 'morgan';
+import express from 'express';
+import rateLimit from 'express-rate-limit';
 
 const tarefasRouter = require('./routes/tarefas');
 const usuariosRouter = require('./routes/usuarios');  // <- arrumar
 const vibecodedRouter = require('./routes/vibecoded');
 const homepageRouter = require('./routes/homepage');
+
+
+// Formato	Uso recomendado	O que inclui
+// dev	| Desenvolvimento | local	Método, rota, status colorido por faixa e tempo de resposta
+// combined	| Produção	| IP de origem, data, método, rota, status, tamanho da resposta e user-agent
+// common |	Produção | (mais enxuto que combined)	Parecido com o combined, sem o user-agent
+// tiny	| Ambientes | com pouco espaço em log	Só o essencial: método, rota, status e tamanho
+app.use(morgan('dev'));
+
+
+// aplica um conjunto de cabecalhos de seguranca recomendados,
+// incluindo a remocao do cabecalho X-Powered-By
+app.use(helmet());
+
+
+
+// cors e como usar ele 
+import express from 'express';
+import cors from 'cors';
+
+
+// liberado geral: qualquer origem pode ler a resposta (uso comum so em dev)
+app.use(cors());
+
+// restrito: so essas origens tem permissao (mais adequado para producao)
+const origensPermitidas = ['https://meufront.com', 'http://localhost:5173'];
+
+app.use(cors({
+  origin: origensPermitidas,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true
+}));
+
+
+
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // janela de 15 minutos
+  limit: 100,               // no maximo 100 requisicoes por IP nessa janela
+  message: { erro: 'Muitas requisicoes, tente novamente mais tarde' }
+});
+
+// aplica o limite a toda a API
+app.use(limiter);
+
+// ou aplica so numa rota mais sensivel, como o login
+app.post('/login', limiter, (req, res) => {
+  // ...
+});
+
+
 
 // schema e sanitiza junto
 const criarTarefaSchema = z.object({
@@ -84,8 +141,8 @@ app.get('/', (req, res) => {
 // app.use(verificarToken);
 app.use(logarRequisicao);
 app.use(express.json());
-app.use('/tarefas', tarefasRouter);
-app.use('/usuarios', usuariosRouter); // <- arrumar
+app.use("/tarefas", require("./routes/tarefas.routes"))
+app.use('/usuarios', usuariosRouter); 
 app.get('/vibecoded', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'vibecoded.html'));
 });
@@ -102,7 +159,7 @@ app.get('/arquivos', (req, res) => {
 // é o cliente, product manager e os dev tlgd
 
 // obs - acho q se colocar require dentro do app.use ele só carrega a rota quando precisa, deve melhorar a performance sla
-app.use("/tarefas", require("./routes/tarefas.routes"));
+app.use("/tarefas", require("./src/routes/tarefas.routes"));
 
 
 
