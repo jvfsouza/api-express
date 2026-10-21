@@ -2,8 +2,15 @@
 let tarefas = [];
 let proximoId = 1;
 
-function listar() {
-  return tarefas;
+// lista as tarefas, aplicando os filtros que chegam da query (?concluida=true)
+function listar(filtros = {}) {
+  const { concluida, titulo } = filtros;
+
+  return tarefas.filter((tarefa) => {
+    if (concluida !== undefined && tarefa.concluida !== concluida) return false;
+    if (titulo && !tarefa.titulo.toLowerCase().includes(titulo.toLowerCase())) return false;
+    return true;
+  });
 }
 
 function buscarPorId(id) {
@@ -15,7 +22,8 @@ function criar(dados) {
     id: proximoId++,
     titulo: dados.titulo,
     descricao: dados.descricao || "",
-    concluida: false,
+    prioridade: dados.prioridade ?? 1,
+    concluida: dados.concluida ?? false,
     criadaEm: new Date().toISOString(),
   };
   tarefas.push(novaTarefa);

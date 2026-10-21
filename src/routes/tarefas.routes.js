@@ -1,16 +1,26 @@
-// routes/tarefas.routes.js
+// src/routes/tarefas.routes.js
 const express = require("express");
 const router = express.Router();
 
 const tarefasController = require("../controllers/tarefas.controller");
 const { validar } = require("../middlewares/validar");
-const { tarefaSchema, atualizarTarefaSchema } = require("../schemas/tarefa.schema");
+const {
+  tarefaSchema,
+  atualizarTarefaSchema,
+  tarefaIdSchema,
+  tarefaQuerySchema,
+} = require("../schemas/tarefa.schema");
 
-router.get("/", tarefasController.listar);
-router.get("/:id", tarefasController.buscarPorId);
+// GET /tarefas?concluida=true&titulo=estudar
+router.get("/", validar(tarefaQuerySchema, "query"), tarefasController.listar);
+// GET /tarefas/:id
+router.get("/:id", validar(tarefaIdSchema, "params"), tarefasController.buscarPorId);
+// POST /tarefas
 router.post("/", validar(tarefaSchema), tarefasController.criar);
-router.put("/:id", validar(atualizarTarefaSchema), tarefasController.atualizar);
-router.delete("/:id", tarefasController.remover);
+// PUT /tarefas/:id
+router.put("/:id", validar(tarefaIdSchema, "params"), validar(atualizarTarefaSchema), tarefasController.atualizar);
+// DELETE /tarefas/:id
+router.delete("/:id", validar(tarefaIdSchema, "params"), tarefasController.remover);
 
 module.exports = router;
-// no app.js: app.use("/tarefas", require("./routes/tarefas.routes"));
+// no app.js: app.use("/tarefas", require("./src/routes/tarefas.routes"));

@@ -1,16 +1,45 @@
-import express from 'express';
-import morgan from 'morgan';
+// src/middlewares/validar.js
+// Middleware que valida a requisicao contra um schema do zod.
+//
+// Como funciona:
+//   - roda o safeParse do schema em req.body (ou req.params / req.query)
+//   - se deu certo, segue pra proxima rota com o dado ja limpo
+//     (sem campo extra, sem string sobrando, ja convertido)
+//   - se deu errado, responde 400 com o detalhe de cada campo
+//     e nem chega no controller.
+//
+// Uso na rota:
+//   router.post('/', validar(tarefaSchema), tarefasController.criar);
+//   router.get('/:id', validar(tarefaIdSchema, 'params'), tarefasController.buscarPorId);
 
-const app = express();
+function validar(schema, origem = 'body') {
+  return (req, res, next) => {
+    const resultado = schema.safeParse(req[origem]);
 
-// Formato	Uso recomendado	O que inclui
-// dev	| Desenvolvimento | local	Método, rota, status colorido por faixa e tempo de resposta
-// combined	| Produção	| IP de origem, data, método, rota, status, tamanho da resposta e user-agent
-// common |	Produção | (mais enxuto que combined)	Parecido com o combined, sem o user-agent
-// tiny	| Ambientes | com pouco espaço em log	Só o essencial: método, rota, status e tamanho
+    if (!resultado.success) {
+      // o issue do zod traz o caminho do campo (path) e a mensagem (message)
+      const detalhes = resultado.error.issues.map((issue) => ({
+        campo: issue.path.join('.') || origem,
+        mensagem: issue.message,
+      }));
 
-app.use(morgan('dev'));
+      return res.status(400).json({
+        erro: 'Dados invalidos',
+        detalhes,
+      });
+    }
 
-// GET /tarefas 200 3.412 ms - 128
-// POST /tarefas 201 8.190 ms - 64
-// GET /tarefas/999 404 1.203 ms - 27
+    // substitui pelo dado validado (sem campo extra e ja convertido)
+    // obs - no express 5 o req.query e um getter (ele reparseia a cada acesso),
+    //       entao nao da pra trocar o valor dele: guardamos do lado em req.queryValido
+    if (origem === 'query') {
+      req.queryValido = resultado.data;
+    } else {
+      req[origem] = resultado.data;
+    }
+
+    next();
+  };
+}
+
+module.exports = { validar };

@@ -9,7 +9,7 @@ function erroNaoEncontrado() {
 
 async function listar(req, res, next) {
   try {
-    const tarefas = await tarefaService.listar();
+    const tarefas = await tarefaService.listar(req.queryValido ?? {});
     res.status(200).json(tarefas);
   } catch (err) {
     next(err);

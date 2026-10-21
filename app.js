@@ -10,12 +10,11 @@ const app = express();
 
 const emProducao = process.env.NODE_ENV === 'production';
 
-import helmet from 'helmet';
-import morgan from 'morgan';
-import express from 'express';
-import rateLimit from 'express-rate-limit';
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 
-const tarefasRouter = require('./routes/tarefas');
+// const tarefasRouter = require('./routes/tarefas');
 const usuariosRouter = require('./routes/usuarios');  // <- arrumar
 const vibecodedRouter = require('./routes/vibecoded');
 const homepageRouter = require('./routes/homepage');
@@ -36,9 +35,7 @@ app.use(helmet());
 
 
 // cors e como usar ele 
-import express from 'express';
-import cors from 'cors';
-
+const cors = require('cors')
 
 // liberado geral: qualquer origem pode ler a resposta (uso comum so em dev)
 app.use(cors());
@@ -145,7 +142,7 @@ app.get('/', (req, res) => {
 // app.use(verificarToken);
 app.use(logarRequisicao);
 app.use(express.json());
-app.use("/tarefas", require("./routes/tarefas.routes"))
+// app.use("/tarefas", require("./src/routes/tarefas.routes"))
 app.use('/usuarios', usuariosRouter); 
 app.get('/vibecoded', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'vibecoded.html'));
@@ -172,5 +169,5 @@ app.use(tratadorDeErros)
 
 
 
-
-export default app;
+module.exports = app;
+// export default app;
