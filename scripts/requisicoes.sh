@@ -15,7 +15,7 @@
 BASE_URL="${BASE_URL:-http://localhost:3000}"
 VERBOSE="${VERBOSE:-0}"
 
-OK=0
+OK=0C
 ERROS=0
 
 verde()    { printf '\033[32m%s\033[0m\n' "$1"; }
