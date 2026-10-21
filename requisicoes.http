@@ -1,0 +1,222 @@
+### Requisições da API - usar com a extensão REST Client (VS Code) ou HTTP Client (IntelliJ)
+### docs: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+###
+### obs - com o servidor rodando (npm start) é só clicar em "Send Request" acima de cada bloco
+### obs - o bloco com < > do lado do nome é o que o REST Client usa pra salvar a resposta
+
+@baseUrl = http://localhost:3000
+@tarefaId = 1
+
+
+###############################################################################
+# TAREFAS - caminho feliz
+###############################################################################
+
+### GET /tarefas - lista todas as tarefas (200)
+GET {{baseUrl}}/tarefas
+Accept: application/json
+
+### POST /tarefas - cria tarefa completa (201)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Estudar Express",
+  "descricao": "Assistir a aula de middlewares",
+  "prioridade": 2
+}
+
+### POST /tarefas - cria com so o titulo, o resto vem com default (201)
+###         -> descricao: "", prioridade: 1, concluida: false
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Fazer compras"
+}
+
+### GET /tarefas/:id - busca uma tarefa (200)
+GET {{baseUrl}}/tarefas/{{tarefaId}}
+Accept: application/json
+
+### PUT /tarefas/:id - atualiza so o que foi enviado (200)
+###         -> os campos que nao vierem continuam como estavam
+PUT {{baseUrl}}/tarefas/{{tarefaId}}
+Content-Type: application/json
+
+{
+  "concluida": true
+}
+
+### PUT /tarefas/:id - atualiza titulo e prioridade (200)
+PUT {{baseUrl}}/tarefas/{{tarefaId}}
+Content-Type: application/json
+
+{
+  "titulo": "Estudar Express e Zod",
+  "prioridade": 3
+}
+
+### DELETE /tarefas/:id - deleta a tarefa (204, sem body)
+DELETE {{baseUrl}}/tarefas/{{tarefaId}}
+
+
+###############################################################################
+# TAREFAS - filtros pela query string
+###############################################################################
+
+### GET /tarefas?concluida=false - so as pendentes (200)
+GET {{baseUrl}}/tarefas?concluida=false
+Accept: application/json
+
+### GET /tarefas?concluida=true - so as concluidas (200)
+GET {{baseUrl}}/tarefas?concluida=true
+Accept: application/json
+
+### GET /tarefas?titulo=estudar - busca por texto no titulo (200)
+GET {{baseUrl}}/tarefas?titulo=estudar
+Accept: application/json
+
+### GET /tarefas?concluida=false&titulo=estudar - filtros juntos (200)
+GET {{baseUrl}}/tarefas?concluida=false&titulo=estudar
+Accept: application/json
+
+
+###############################################################################
+# TAREFAS - o schema barrando (todos devolvem 400 com { erro, detalhes })
+###############################################################################
+
+### POST /tarefas - sem titulo (400)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "descricao": "faltou o titulo"
+}
+
+### POST /tarefas - titulo com menos de 3 caracteres (400)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "ab"
+}
+
+### POST /tarefas - titulo com mais de 100 caracteres (400)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}
+
+### POST /tarefas - mandou campo que nao existe (400, o .strict() barra)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "tentando mandar id",
+  "id": 99,
+  "criadaEm": "2020-01-01T00:00:00.000Z"
+}
+
+### POST /tarefas - prioridade fora de 1 a 3 (400)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Prioridade furada",
+  "prioridade": 7
+}
+
+### POST /tarefas - prioridade como texto (400)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Prioridade texto",
+  "prioridade": "alta"
+}
+
+### POST /tarefas - concluida sem ser booleano (400)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Concluida invalida",
+  "concluida": "sim"
+}
+
+### POST /tarefas - descricao com mais de 500 caracteres (400)
+POST {{baseUrl}}/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Descricao gigante",
+  "descricao": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}
+
+### PUT /tarefas/:id - body vazio (400, o refine exige pelo menos 1 campo)
+PUT {{baseUrl}}/tarefas/{{tarefaId}}
+Content-Type: application/json
+
+{}
+
+### PUT /tarefas/:id - titulo invalido (400)
+PUT {{baseUrl}}/tarefas/{{tarefaId}}
+Content-Type: application/json
+
+{
+  "titulo": "x"
+}
+
+### GET /tarefas/abc - id nao numerico (400)
+GET {{baseUrl}}/tarefas/abc
+Accept: application/json
+
+### GET /tarefas/0 - id precisa ser maior que zero (400)
+GET {{baseUrl}}/tarefas/0
+Accept: application/json
+
+### GET /tarefas?concluida=nao - filtro invalido (400)
+GET {{baseUrl}}/tarefas?concluida=nao
+Accept: application/json
+
+### GET /tarefas/999999 - tarefa que nao existe (404)
+GET {{baseUrl}}/tarefas/999999
+Accept: application/json
+
+### DELETE /tarefas/999999 - tarefa que nao existe (404)
+DELETE {{baseUrl}}/tarefas/999999
+
+
+###############################################################################
+# USUARIOS
+###############################################################################
+
+### GET /usuarios - lista os usuarios (200)
+GET {{baseUrl}}/usuarios
+Accept: application/json
+
+### POST /usuarios - cria usuario, o ehmaior e calculado sozinho (201)
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nome": "Joao da Silva",
+  "idade": 20
+}
+
+
+###############################################################################
+# PAGINAS E STATIC
+###############################################################################
+
+### GET / - homepage (200)
+GET {{baseUrl}}/
+
+### GET /vibecoded - outra pagina (200)
+GET {{baseUrl}}/vibecoded
+
+### GET /arquivos - arquivo estatico (200)
+GET {{baseUrl}}/arquivos

@@ -54,7 +54,9 @@ app.use(cors({
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // janela de 15 minutos
-  limit: 100,               // no maximo 100 requisicoes por IP nessa janela
+  // no maximo X requisicoes por IP nessa janela
+  // em dev o limite e alto (pra nao atrapalhar os testes), em producao e mais apertado
+  limit: Number(process.env.RATE_LIMIT_MAX) || (emProducao ? 100 : 1000),
   message: { erro: 'Muitas requisicoes, tente novamente mais tarde' }
 });
 
